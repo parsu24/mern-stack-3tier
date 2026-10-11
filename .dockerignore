@@ -1,0 +1,3 @@
+printf "node_modules\nnpm-debug.log*\n.git\n.env\nconfig.env\n" > mern/client/.dockerignore
+
+printf "node_modules\nnpm-debug.log*\n.git\n.env\nconfig.env\n" > mern/server/.dockerignore

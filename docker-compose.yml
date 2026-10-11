@@ -1,0 +1,53 @@
+
+services:
+  frontend:
+    build:
+      context: ./mern/client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - mern-network
+
+  backend:
+    build:
+      context: ./mern/server
+    env_file:
+      - ./mern/server/config.env
+    expose:
+      - "5050"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mern-network
+
+  database:
+    image: mongo:7.0
+    volumes:
+      - mongo-data:/data/db
+    expose:
+      - "27017"
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - "db.adminCommand('ping').ok"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - mern-network
+
+networks:
+  mern-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
